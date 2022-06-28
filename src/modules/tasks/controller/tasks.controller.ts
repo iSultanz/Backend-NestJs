@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { getUser } from "src/decorators/get-user.decorators"; 
+import { getUser } from "src/decorators/get-user.decorator"; 
 import { User } from "src/modules/auth/entities/user.entity"; 
 import { CreateTaskDto } from "../dto/create-task.dto";
 import { GetTaskFiliterDto } from "../dto/get-tasks-filiter.dto";

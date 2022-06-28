@@ -1,12 +1,13 @@
-import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotAcceptableException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthCredentialDto } from '../dto/auth-credentials.dto';
-import { User } from '../entities/user.entity'; 
+import { User } from '../entities/user.entity';
 import * as bcrypt from 'bcrypt'
 import { AuthSignIn } from '../dto/auth-singIn.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../jwt-payload.interface';
+import { UpdateInformationDto } from '../dto/update-information.dto';
 
 @Injectable()
 export class AuthService {
@@ -60,7 +61,7 @@ export class AuthService {
 
     async getAllUsers(): Promise<User[]> {
         return this.userRepository.createQueryBuilder('user')
-        .select(['user.id','user.username','user.roles']).getMany()
+            .select(['user.id', 'user.username', 'user.roles']).getMany()
     }
     async getUserTask(username: string): Promise<User[]> {
         const tasks = await this.userRepository.createQueryBuilder('user')
@@ -76,6 +77,35 @@ export class AuthService {
     }
 
 
+    async UpdateUser(username: string, userInfromationDto: UpdateInformationDto, user: User): Promise<User[]> {
+        if (username != user.username) {
+            throw new UnauthorizedException()
+        }
+        const query = await this.userRepository.createQueryBuilder()
+
+        if (userInfromationDto.firstName != null) {
+            query.update(User)
+                .set({ firstName: userInfromationDto.firstName }).where({ username }).execute()
+        }
+
+        if (userInfromationDto.lastName != null) {
+            query.update(User)
+                .set({ lastName: userInfromationDto.lastName }).where({ username }).execute()
+        }
+
+
+        if (userInfromationDto.email != null) {
+            query.update(User)
+                .set({ email: userInfromationDto.email }).where({ username }).execute()
+        }
+
+        if (userInfromationDto.email && userInfromationDto.firstName && userInfromationDto.lastName == null) {
+            throw new NotAcceptableException('No Entry')
+        }
+
+        return this.userRepository.createQueryBuilder().where({ username }).getMany();
+
+    }
 
 }
 

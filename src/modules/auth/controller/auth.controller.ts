@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../service/auth.service';
 import { AuthCredentialDto } from '../dto/auth-credentials.dto';
@@ -7,6 +7,8 @@ import { Role } from 'src/constants/role.enum';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { User } from '../entities/user.entity';
+import { UpdateInformationDto } from '../dto/update-information.dto';
+import { getUser } from 'src/decorators/get-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -34,5 +36,27 @@ export class AuthController {
     getUserTask(@Param('username') username: string): Promise<User[]> {
         return this.authService.getUserTask(username);
     }
+
+
+
+
+    @UseGuards(AuthGuard())
+    @Patch('/user/:username/update')
+    async updateInformation(
+        @Param('username') username:string,
+         @Body() updateInformationDto: UpdateInformationDto,
+         @getUser() user: User
+    ):Promise<User[]>{
+        return  this.authService.UpdateUser(username,updateInformationDto,user)
+    }
+
+    // @Patch('/:id/status')
+    // async UpdateStatusByID(
+    //    @Param('id') id:string,
+    //    @Body() UpdateTaskStatusDto: UpdateTaskStatusDto,@getUser() user: User
+    //  ):Promise<Task> {
+    //    const {status} = UpdateTaskStatusDto; 
+    //    return this.tasksService.UpdateStatusByID(id, status, user);
+    //  }
 
 }
