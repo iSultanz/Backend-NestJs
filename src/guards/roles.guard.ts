@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common/decorators/core";
 import { CanActivate } from "@nestjs/common/interfaces/features/can-activate.interface";
 import { ExecutionContext } from "@nestjs/common/interfaces/features/execution-context.interface";
 import { Reflector } from "@nestjs/core";
-import { Role } from "./role.enum"; 
+import { Role } from "src/constants/role.enum";  
 
 
 

@@ -1,12 +1,12 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthService } from './auth.service';
-import { AuthCredentialDto } from './dto/auth-credentials.dto';
-import { AuthSignIn } from './dto/auth-singIn.dto';
-import { Role } from './role.enum';
-import { Roles } from './roles.decorator';
-import { RolesGuard } from './roles.guard';
-import { User } from './user.entity';
+import { AuthService } from '../service/auth.service'; 
+import { AuthCredentialDto } from '../dto/auth-credentials.dto'; 
+import { AuthSignIn } from '../dto/auth-singIn.dto';
+import { Role } from 'src/constants/role.enum'; 
+import { Roles } from 'src/decorators/roles.decorator'; 
+import { RolesGuard } from 'src/guards/roles.guard';
+import { User } from '../entities/user.entity'; 
 
 @Controller('auth')
 export class AuthController {
