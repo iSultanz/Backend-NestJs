@@ -1,14 +1,12 @@
 import { Task } from "src/modules/tasks/entities/task.entity"; 
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import { Role } from "src/constants/role.enum";  
+import { AbstractClass } from "./user-id.entity";
 
 
 @Entity()
-export class User{
+export class User extends AbstractClass{
 
-
-@PrimaryGeneratedColumn('uuid')
-id:string;
 
 @Column({default: Role.USER})
 roles: Role;
@@ -17,7 +15,17 @@ roles: Role;
 username:string;
 
 @Column()
+firstName: string;
+
+@Column()
+lastName: string;
+
+@Column()
+email: string;
+
+@Column()
 password:string;
+
 
 @OneToMany(() => Task, (task) => task.user, {eager: true})
 tasks: Task[];

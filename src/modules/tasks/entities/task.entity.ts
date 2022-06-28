@@ -1,11 +1,10 @@
 import { Exclude } from 'class-transformer';
+import { AbstractClass } from 'src/modules/auth/entities/user-id.entity';
 import { User } from 'src/modules/auth/entities/user.entity'; 
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { TaskStatus } from '../enum/tasks-status.enum'; 
 @Entity()
-export class Task{
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+export class Task extends AbstractClass{
     
     @Column()
     title: string;

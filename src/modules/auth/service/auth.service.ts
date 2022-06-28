@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthCredentialDto } from '../dto/auth-credentials.dto';
@@ -17,7 +17,7 @@ export class AuthService {
     ) { }
 
     async signUp(authCredentialDto: AuthCredentialDto): Promise<string> {
-        const { username, password, roles } = authCredentialDto;
+        const { username, password, roles, firstName, lastName, email } = authCredentialDto;
 
         //hash
         const salt = await bcrypt.genSalt();
@@ -27,6 +27,9 @@ export class AuthService {
             username,
             password: hashedPassword,
             roles,
+            firstName,
+            lastName,
+            email,
         });
         try {
             await this.userRepository.save(user);
@@ -59,7 +62,18 @@ export class AuthService {
         return this.userRepository.createQueryBuilder('user')
         .select(['user.id','user.username','user.roles']).getMany()
     }
+    async getUserTask(username: string): Promise<User[]> {
+        const tasks = await this.userRepository.createQueryBuilder('user')
+            .leftJoinAndSelect("user.tasks", "Tasks")
+            .where('(LOWER(user.username) LIKE LOWER(:username))', { username: `%${username}%` })
+            .select(['user.id', 'user.username', 'user.roles', 'Tasks'])
+            .getMany();
+        if (Object.keys(tasks).length === 0) {
+            throw new NotFoundException(`The User: "${username}" not found`);
+        }
+        return tasks;
 
+    }
 
 
 
