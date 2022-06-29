@@ -43,7 +43,6 @@ export class AuthController {
         @Param('username') username:string,
          @Body() updateInformationDto: UpdateInformationDto,
          @getUser() user: User):Promise<User[]>{
-        console.log(username,user.username)
         return  this.authService.UpdateUser(username,updateInformationDto,user)
     }
 

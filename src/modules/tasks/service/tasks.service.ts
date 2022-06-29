@@ -1,11 +1,11 @@
-import {  Injectable, NotFoundException, Logger, InternalServerErrorException } from "@nestjs/common";
-import { TaskStatus } from "../enum/tasks-status.enum"; 
+import { Injectable, NotFoundException, Logger, InternalServerErrorException } from "@nestjs/common";
+import { TaskStatus } from "../enum/tasks-status.enum";
 import { CreateTaskDto } from "../dto/create-task.dto";
 import { GetTaskFiliterDto } from "../dto/get-tasks-filiter.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Task } from "../entities/task.entity"; 
+import { Task } from "../entities/task.entity";
 import { Repository } from "typeorm";
-import { User } from "src/modules/auth/entities/user.entity"; 
+import { User } from "src/modules/auth/entities/user.entity";
 
 @Injectable()
 export class TasksService {
@@ -37,7 +37,7 @@ export class TasksService {
       const tasks = await query.getMany();
       return tasks;
     } catch (error) {
-      this.logger.error(`Failed to get tasks for user ${user.username} Filter: ${JSON.stringify(filter)}`,error.stack,);
+      this.logger.error(`Failed to get tasks for user ${user.username} Filter: ${JSON.stringify(filter)}`, error.stack,);
       throw new InternalServerErrorException();
     }
   }
@@ -80,4 +80,17 @@ export class TasksService {
     await this.taskRepository.save(task);
     return task;
   }
+  async deleteUserTaskByAdmin(id: string): Promise<string> {
+
+    const found = await this.taskRepository.findOne({ where: { id } })
+
+    if (!found) {
+      throw new NotFoundException(`Task with ID "${id}" Not found`);
+    }
+    await this.taskRepository.update(id, { deleted_at: new Date });
+
+    return 'task deleted successfully';
+
+  }
+
 }
