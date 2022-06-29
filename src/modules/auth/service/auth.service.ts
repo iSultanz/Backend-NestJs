@@ -108,6 +108,15 @@ export class AuthService {
         .select(['user.firstName', 'user.lastName', 'user.email']).getMany();
 
     }
+    async DeleteUserByAdmin(username: string) {
+        const found = await this.userRepository.createQueryBuilder().where({username}).getMany();
+         if (Object.keys(found).length === 0) {
+            throw new NotFoundException(`The User: "${username}" not found`);
+        }
+            await this.userRepository.createQueryBuilder()
+            .update(User).where({username}).set({ deleted_at: new Date }).execute();
 
+        return 'User has been deleted successfully';
+    }
 }
 
