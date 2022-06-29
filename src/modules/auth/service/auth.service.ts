@@ -78,6 +78,7 @@ export class AuthService {
 
 
     async UpdateUser(username: string, userInfromationDto: UpdateInformationDto, user: User): Promise<User[]> {
+        console.log(username,user.username)
         if (username != user.username) {
             throw new UnauthorizedException()
         }
@@ -103,7 +104,8 @@ export class AuthService {
             throw new NotAcceptableException('No Entry')
         }
 
-        return this.userRepository.createQueryBuilder().where({ username }).getMany();
+        return this.userRepository.createQueryBuilder('user').where({ username })
+        .select(['user.firstName', 'user.lastName', 'user.email']).getMany();
 
     }
 

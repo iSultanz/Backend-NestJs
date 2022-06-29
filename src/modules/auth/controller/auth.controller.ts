@@ -37,13 +37,15 @@ export class AuthController {
         return this.authService.getUserTask(username);
     }
 
+    @UseGuards(AuthGuard())
     @Patch('/user/:username/update')
     async updateInformation(
         @Param('username') username:string,
          @Body() updateInformationDto: UpdateInformationDto,
-         @getUser() user: User
-    ):Promise<User[]>{
+         @getUser() user: User):Promise<User[]>{
+        console.log(username,user.username)
         return  this.authService.UpdateUser(username,updateInformationDto,user)
     }
 
 }
+
