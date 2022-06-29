@@ -109,5 +109,35 @@ export class AuthService {
 
     }
 
+    async DeleteUserByAdmin(username: string) {
+        const found = await this.userRepository.createQueryBuilder().where({username}).getMany();
+         console.log(found)
+         if (Object.keys(found).length === 0) {
+            throw new NotFoundException(`The User: "${username}" not found`);
+        }
+
+            await this.userRepository.createQueryBuilder()
+            .update(User).where({username}).set({ deleted_at: new Date }).execute();
+
+        return 'User has been deleted successfully';
+    }
+
+
+
+
+
+    // async deleteUserTaskByAdmin(id: string): Promise<string> {
+
+    //     const found = await this.taskRepository.findOne({ where: { id } })
+    
+    //     if (!found) {
+    //       throw new NotFoundException(`Task with ID "${id}" Not found`);
+    //     }
+    //     await this.taskRepository.update(id, { deleted_at: new Date });
+    
+    //     return 'task deleted successfully';
+    
+    //   }
+
 }
 
