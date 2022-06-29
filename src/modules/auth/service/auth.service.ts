@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, InternalServerErrorException, NotAcceptableException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotAcceptableException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthCredentialDto } from '../dto/auth-credentials.dto';
@@ -117,6 +117,18 @@ export class AuthService {
             .update(User).where({username}).set({ deleted_at: new Date }).execute();
 
         return 'User has been deleted successfully';
+    }
+
+
+    async RestoreUserByAdmin(username:string){
+        const found = await this.userRepository.createQueryBuilder().where({username}).getMany();
+        if(Object.keys(found).length !== 0){
+            throw new BadRequestException(`The User: "${username}" is not deleted`)
+        }
+        await this.userRepository.createQueryBuilder()
+        .update(User).where({username}).set({ deleted_at: null }).execute();
+
+        return 'The User has been restored successfully';
     }
 }
 

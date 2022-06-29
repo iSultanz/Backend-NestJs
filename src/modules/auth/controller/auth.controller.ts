@@ -47,11 +47,18 @@ export class AuthController {
     }
 
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Delete('user/admin/delete/:username')
+    @Delete('/user/admin/delete/:username')
     @Roles(Role.ADMIN)
     DeleteUserByAdmin(@Param('username') username: string) {
       return this.authService.DeleteUserByAdmin(username);
   
+    }
+
+    @UseGuards(AuthGuard('jwt'),RolesGuard)
+    @Patch('/user/admin/restore/:username')
+    @Roles(Role.ADMIN)
+    RestoreUserByAdmin(@Param('username') username: string){
+        return this.authService.RestoreUserByAdmin(username)
     }
 
 }
