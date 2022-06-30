@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsString, Matches, MaxLength, MinLength } from "class-validator";
-import { Role } from "src/constants/role.enum"; 
+import { Role } from "../../../constants/role.enum";
 
 export class AuthCredentialDto {
     @IsString()
@@ -21,7 +21,7 @@ export class AuthCredentialDto {
     @MaxLength(32)
     @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, { message: 'password is weak' })
     password: string;
-    
+
     @IsEnum(Role)
     roles: Role;
 

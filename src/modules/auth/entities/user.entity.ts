@@ -1,32 +1,35 @@
-import { Task } from "src/modules/tasks/entities/task.entity"; 
-import { Column, Entity, OneToMany } from "typeorm";
-import { Role } from "src/constants/role.enum";  
+import { Column, Entity, OneToMany, OneToOne } from "typeorm";
+import { Role } from "../../../constants/role.enum";
 import { AbstractClass } from "./user-id.entity";
+import { UserAvatar } from "../../user-avatar/entities/user-avatar.entity";
+import { Task } from "../../tasks/entities/task.entity";
 
 
 @Entity()
-export class User extends AbstractClass{
+export class User extends AbstractClass {
 
 
-@Column({default: Role.USER})
-roles: Role;
+    @Column({ default: Role.USER })
+    roles: Role;
 
-@Column({unique: true})
-username:string;
+    @Column({ unique: true })
+    username: string;
 
-@Column()
-firstName: string;
+    @Column()
+    firstName: string;
 
-@Column()
-lastName: string;
+    @Column()
+    lastName: string;
 
-@Column()
-email: string;
+    @Column()
+    email: string;
 
-@Column()
-password:string;
+    @Column()
+    password: string;
 
+    @OneToMany(() => Task, (task) => task.user)
+    tasks: Task[];
 
-@OneToMany(() => Task, (task) => task.user, {eager: true})
-tasks: Task[];
+    @OneToOne(() => UserAvatar, ({ user }) => user)
+    userAvatar: UserAvatar
 }

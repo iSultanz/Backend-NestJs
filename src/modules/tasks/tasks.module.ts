@@ -1,13 +1,13 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthModule } from "../auth/auth.module";
-import { Task } from "./entities/task.entity"; 
+import { Task } from "./entities/task.entity";
 import { TasksController } from "./controller/tasks.controller";
 import { TasksService } from "./service/tasks.service";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Task]),AuthModule],
+  imports: [TypeOrmModule.forFeature([Task]), AuthModule],
   controllers: [TasksController],
   providers: [TasksService],
 })
-export class TasksModule {}
+export class TasksModule { }

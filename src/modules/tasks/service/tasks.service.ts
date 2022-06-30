@@ -5,7 +5,7 @@ import { GetTaskFiliterDto } from "../dto/get-tasks-filiter.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Task } from "../entities/task.entity";
 import { Repository } from "typeorm";
-import { User } from "src/modules/auth/entities/user.entity";
+import { User } from "../../auth/entities/user.entity";
 
 @Injectable()
 export class TasksService {
@@ -34,7 +34,7 @@ export class TasksService {
       );
     }
     try {
-      const tasks = await query.getMany();
+      const tasks = await query.select(['task.title', 'task.description', 'task.status']).getMany();
       return tasks;
     } catch (error) {
       this.logger.error(`Failed to get tasks for user ${user.username} Filter: ${JSON.stringify(filter)}`, error.stack,);
@@ -78,6 +78,7 @@ export class TasksService {
       user,
     });
     await this.taskRepository.save(task);
+    delete task.user;
     return task;
   }
   async deleteUserTaskByAdmin(id: string): Promise<string> {
@@ -87,7 +88,7 @@ export class TasksService {
     if (!found) {
       throw new NotFoundException(`Task with ID "${id}" Not found`);
     }
-    await this.taskRepository.update(id, { deleted_at: new Date });
+    await this.taskRepository.update(id, { deletedAt: new Date });
 
     return 'task deleted successfully';
 

@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common/decorators/core";
 import { CanActivate } from "@nestjs/common/interfaces/features/can-activate.interface";
 import { ExecutionContext } from "@nestjs/common/interfaces/features/execution-context.interface";
 import { Reflector } from "@nestjs/core";
-import { Role } from "src/constants/role.enum";  
+import { Role } from "../constants/role.enum";  
 
 
 
@@ -19,7 +19,6 @@ export class RolesGuard implements CanActivate{
         ]);
         if(!requireRoles){
             throw new InternalServerErrorException();
-            return true; 
         }
         const { user } = context.switchToHttp().getRequest();
 

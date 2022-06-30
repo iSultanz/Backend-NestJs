@@ -1,11 +1,11 @@
 import { Exclude } from 'class-transformer';
-import { AbstractClass } from 'src/modules/auth/entities/user-id.entity';
-import { User } from 'src/modules/auth/entities/user.entity'; 
+import { AbstractClass } from '../../auth/entities/user-id.entity';
+import { User } from '../../auth/entities/user.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
-import { TaskStatus } from '../enum/tasks-status.enum'; 
+import { TaskStatus } from '../enum/tasks-status.enum';
 @Entity()
-export class Task extends AbstractClass{
-    
+export class Task extends AbstractClass {
+
     @Column()
     title: string;
 
@@ -15,7 +15,7 @@ export class Task extends AbstractClass{
     @Column()
     status: TaskStatus;
 
-    @ManyToOne( () => User, (user) => user.tasks, {eager: false})
+    @ManyToOne(() => User, (user) => user.tasks)
     @Exclude()
     user: User;
 }
