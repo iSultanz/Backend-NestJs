@@ -78,7 +78,6 @@ export class AuthService {
 
 
     async UpdateUser(username: string, userInfromationDto: UpdateInformationDto, user: User): Promise<User[]> {
-        console.log(username, user.username)
         if (username != user.username) {
             throw new UnauthorizedException()
         }
@@ -129,6 +128,14 @@ export class AuthService {
             .update(User).where({ username }).set({ deletedAt: null }).execute();
 
         return 'The User has been restored successfully';
+    }
+
+    async getTasksOfAllUsers():Promise<User[]> {
+        const tasks = await this.userRepository.createQueryBuilder('user')
+        .leftJoinAndSelect("user.tasks", "Tasks")
+        .select(['user.username', 'user.roles', 'Tasks.id','Tasks.title','Tasks.description','Tasks.status'])
+        .getMany();
+        return tasks;
     }
 }
 

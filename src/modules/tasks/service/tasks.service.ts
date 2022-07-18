@@ -1,11 +1,12 @@
-import { Injectable, NotFoundException, Logger, InternalServerErrorException } from "@nestjs/common";
-import { TaskStatus } from "../enum/tasks-status.enum";
-import { CreateTaskDto } from "../dto/create-task.dto";
-import { GetTaskFiliterDto } from "../dto/get-tasks-filiter.dto";
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Task } from "../entities/task.entity";
+import { isUUID } from "class-validator";
 import { Repository } from "typeorm";
 import { User } from "../../auth/entities/user.entity";
+import { CreateTaskDto } from "../dto/create-task.dto";
+import { GetTaskFiliterDto } from "../dto/get-tasks-filiter.dto";
+import { Task } from "../entities/task.entity";
+import { TaskStatus } from "../enum/tasks-status.enum";
 
 @Injectable()
 export class TasksService {
@@ -43,6 +44,9 @@ export class TasksService {
   }
 
   async getTaskByID(id: string, user: User): Promise<Task> {
+    if(!isUUID(id)){
+      throw new NotFoundException(`Task with ID "${id}" Not found`)
+    }
     const found = await this.taskRepository.findOne({ where: { id, user } });
     if (!found) {
       throw new NotFoundException(`Task with ID "${id}" not found`);
@@ -60,7 +64,7 @@ export class TasksService {
   }
 
   async UpdateStatusByID(id: string, status: TaskStatus, user: User): Promise<Task> {
-    const task = this.getTaskByID(id, user);
+    const task = await this.getTaskByID(id, user);
     await this.taskRepository.createQueryBuilder()
       .update(Task)
       .set({ status: status })

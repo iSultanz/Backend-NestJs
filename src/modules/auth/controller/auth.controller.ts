@@ -53,6 +53,12 @@ export class AuthController {
         return this.authService.DeleteUserByAdmin(username);
 
     }
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Get('/users/admin/getAllTasks')
+    @Roles(Role.ADMIN)
+    getTasksOfAllUsers(): Promise<User[]> {
+        return this.authService.getTasksOfAllUsers();
+    }
 
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @Patch('/user/admin/restore/:username')

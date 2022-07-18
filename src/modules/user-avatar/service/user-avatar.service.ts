@@ -40,10 +40,8 @@ export class UserAvatarService {
             data: file.buffer,
             filename: file.originalname,
         });
-        console.log(newAvatarImage)
         try{
             await this.userAvatarRepository.save(newAvatarImage);
-            console.log('tes')
         return {message:'image uploaded successfully'};
         }catch(err){
             console.log(err)
