@@ -3,12 +3,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../service/auth.service';
 import { AuthCredentialDto } from '../dto/auth-credentials.dto';
 import { AuthSignIn } from '../dto/auth-singIn.dto';
-import { Role } from 'src/constants/role.enum';
-import { Roles } from 'src/decorators/roles.decorator';
-import { RolesGuard } from 'src/guards/roles.guard';
+import { Role } from '../../../constants/role.enum';
+import { Roles } from '../../../decorators/roles.decorator';
+import { RolesGuard } from '../../../guards/roles.guard';
 import { User } from '../entities/user.entity';
 import { UpdateInformationDto } from '../dto/update-information.dto';
-import { getUser } from 'src/decorators/get-user.decorator';
+import { getUser } from '../../../decorators/get-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -40,24 +40,30 @@ export class AuthController {
     @UseGuards(AuthGuard())
     @Patch('/user/:username/update')
     async updateInformation(
-        @Param('username') username:string,
-         @Body() updateInformationDto: UpdateInformationDto,
-         @getUser() user: User):Promise<User[]>{
-        return  this.authService.UpdateUser(username,updateInformationDto,user)
+        @Param('username') username: string,
+        @Body() updateInformationDto: UpdateInformationDto,
+        @getUser() user: User): Promise<User[]> {
+        return this.authService.UpdateUser(username, updateInformationDto, user)
     }
 
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @Delete('/user/admin/delete/:username')
     @Roles(Role.ADMIN)
     DeleteUserByAdmin(@Param('username') username: string) {
-      return this.authService.DeleteUserByAdmin(username);
-  
+        return this.authService.DeleteUserByAdmin(username);
+
+    }
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Get('/users/admin/getAllTasks')
+    @Roles(Role.ADMIN)
+    getTasksOfAllUsers(): Promise<User[]> {
+        return this.authService.getTasksOfAllUsers();
     }
 
-    @UseGuards(AuthGuard('jwt'),RolesGuard)
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
     @Patch('/user/admin/restore/:username')
     @Roles(Role.ADMIN)
-    RestoreUserByAdmin(@Param('username') username: string){
+    RestoreUserByAdmin(@Param('username') username: string) {
         return this.authService.RestoreUserByAdmin(username)
     }
 

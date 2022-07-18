@@ -13,7 +13,7 @@ import { UpdateInformationDto } from '../dto/update-information.dto';
 export class AuthService {
     constructor(
         @InjectRepository(User)
-        private userRepository: Repository<User>,
+        public userRepository: Repository<User>,
         private jwtService: JwtService,
     ) { }
 
@@ -78,7 +78,6 @@ export class AuthService {
 
 
     async UpdateUser(username: string, userInfromationDto: UpdateInformationDto, user: User): Promise<User[]> {
-        console.log(username,user.username)
         if (username != user.username) {
             throw new UnauthorizedException()
         }
@@ -105,30 +104,38 @@ export class AuthService {
         }
 
         return this.userRepository.createQueryBuilder('user').where({ username })
-        .select(['user.firstName', 'user.lastName', 'user.email']).getMany();
+            .select(['user.firstName', 'user.lastName', 'user.email']).getMany();
 
     }
     async DeleteUserByAdmin(username: string) {
-        const found = await this.userRepository.createQueryBuilder().where({username}).getMany();
-         if (Object.keys(found).length === 0) {
+        const found = await this.userRepository.createQueryBuilder().where({ username }).getMany();
+        if (Object.keys(found).length === 0) {
             throw new NotFoundException(`The User: "${username}" not found`);
         }
-            await this.userRepository.createQueryBuilder()
-            .update(User).where({username}).set({ deleted_at: new Date }).execute();
+        await this.userRepository.createQueryBuilder()
+            .update(User).where({ username }).set({ deletedAt: new Date }).execute();
 
         return 'User has been deleted successfully';
     }
 
 
-    async RestoreUserByAdmin(username:string){
-        const found = await this.userRepository.createQueryBuilder().where({username}).getMany();
-        if(Object.keys(found).length !== 0){
+    async RestoreUserByAdmin(username: string) {
+        const found = await this.userRepository.createQueryBuilder().where({ username }).getMany();
+        if (Object.keys(found).length !== 0) {
             throw new BadRequestException(`The User: "${username}" is not deleted`)
         }
         await this.userRepository.createQueryBuilder()
-        .update(User).where({username}).set({ deleted_at: null }).execute();
+            .update(User).where({ username }).set({ deletedAt: null }).execute();
 
         return 'The User has been restored successfully';
+    }
+
+    async getTasksOfAllUsers():Promise<User[]> {
+        const tasks = await this.userRepository.createQueryBuilder('user')
+        .leftJoinAndSelect("user.tasks", "Tasks")
+        .select(['user.username', 'user.roles', 'Tasks.id','Tasks.title','Tasks.description','Tasks.status'])
+        .getMany();
+        return tasks;
     }
 }
 

@@ -1,11 +1,12 @@
-import { Injectable, NotFoundException, Logger, InternalServerErrorException } from "@nestjs/common";
-import { TaskStatus } from "../enum/tasks-status.enum";
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { isUUID } from "class-validator";
+import { Repository } from "typeorm";
+import { User } from "../../auth/entities/user.entity";
 import { CreateTaskDto } from "../dto/create-task.dto";
 import { GetTaskFiliterDto } from "../dto/get-tasks-filiter.dto";
-import { InjectRepository } from "@nestjs/typeorm";
 import { Task } from "../entities/task.entity";
-import { Repository } from "typeorm";
-import { User } from "src/modules/auth/entities/user.entity";
+import { TaskStatus } from "../enum/tasks-status.enum";
 
 @Injectable()
 export class TasksService {
@@ -34,7 +35,7 @@ export class TasksService {
       );
     }
     try {
-      const tasks = await query.getMany();
+      const tasks = await query.select(['task.title', 'task.description', 'task.status']).getMany();
       return tasks;
     } catch (error) {
       this.logger.error(`Failed to get tasks for user ${user.username} Filter: ${JSON.stringify(filter)}`, error.stack,);
@@ -43,6 +44,9 @@ export class TasksService {
   }
 
   async getTaskByID(id: string, user: User): Promise<Task> {
+    if(!isUUID(id)){
+      throw new NotFoundException(`Task with ID "${id}" Not found`)
+    }
     const found = await this.taskRepository.findOne({ where: { id, user } });
     if (!found) {
       throw new NotFoundException(`Task with ID "${id}" not found`);
@@ -60,7 +64,7 @@ export class TasksService {
   }
 
   async UpdateStatusByID(id: string, status: TaskStatus, user: User): Promise<Task> {
-    const task = this.getTaskByID(id, user);
+    const task = await this.getTaskByID(id, user);
     await this.taskRepository.createQueryBuilder()
       .update(Task)
       .set({ status: status })
@@ -78,6 +82,7 @@ export class TasksService {
       user,
     });
     await this.taskRepository.save(task);
+    delete task.user;
     return task;
   }
   async deleteUserTaskByAdmin(id: string): Promise<string> {
@@ -87,7 +92,7 @@ export class TasksService {
     if (!found) {
       throw new NotFoundException(`Task with ID "${id}" Not found`);
     }
-    await this.taskRepository.update(id, { deleted_at: new Date });
+    await this.taskRepository.update(id, { deletedAt: new Date });
 
     return 'task deleted successfully';
 

@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from "class-validator";
 
-export class UpdateInformationDto{
+export class UpdateInformationDto {
 
 
     @IsString()
@@ -10,7 +10,7 @@ export class UpdateInformationDto{
     @IsString()
     @IsOptional()
     lastName: string;
-    
+
     @IsString()
     @IsOptional()
     email: string;

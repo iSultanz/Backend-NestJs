@@ -1,4 +1,6 @@
 import * as dotenv from 'dotenv';
+
+
 dotenv.config();
 export = {
   type: 'postgres',
@@ -8,7 +10,8 @@ export = {
   password: '123456',
   database: 'test_migration',
 
-  entities: ['dist/src/**/*.entity{.ts,.js}'],
+  entities: ['src/**/*.entity{.ts,.js}'],
+  autoLoadEntities: true,
   migrations: ["src/db/migrations/*{.js,.ts}"],
   migrationsTableName: 'migration',
   migrationsRun: true,

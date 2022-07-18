@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { Role } from "src/constants/role.enum";
-import { getUser } from "src/decorators/get-user.decorator";
-import { Roles } from "src/decorators/roles.decorator";
-import { RolesGuard } from "src/guards/roles.guard";
-import { User } from "src/modules/auth/entities/user.entity";
+import { Role } from "../../../constants/role.enum";
+import { getUser } from "../../../decorators/get-user.decorator";
+import { Roles } from "../../../decorators/roles.decorator";
+import { RolesGuard } from "../../../guards/roles.guard";
+import { User } from "../../auth/entities/user.entity";
 import { CreateTaskDto } from "../dto/create-task.dto";
 import { GetTaskFiliterDto } from "../dto/get-tasks-filiter.dto";
 import { UpdateTaskStatusDto } from "../dto/update-task-status.dto";
