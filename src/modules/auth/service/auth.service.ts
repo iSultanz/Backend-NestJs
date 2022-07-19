@@ -127,6 +127,10 @@ export class AuthService {
         await this.userRepository.createQueryBuilder()
             .update(User).where({ username }).set({ deletedAt: null }).execute();
 
+            const check = await this.userRepository.createQueryBuilder().where({ username }).getMany();
+            if (Object.keys(check).length == 0) {
+                throw new BadRequestException(`The User: "${username}" Not found`)
+            }
         return 'The User has been restored successfully';
     }
 
