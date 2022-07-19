@@ -13,7 +13,6 @@ import { getUser } from '../../../decorators/get-user.decorator';
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
-
     @Post('/signup')
     signUp(@Body() authCredentialDto: AuthCredentialDto): Promise<string> {
         return this.authService.signUp(authCredentialDto);
