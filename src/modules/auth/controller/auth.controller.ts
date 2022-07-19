@@ -9,7 +9,9 @@ import { RolesGuard } from '../../../guards/roles.guard';
 import { User } from '../entities/user.entity';
 import { UpdateInformationDto } from '../dto/update-information.dto';
 import { getUser } from '../../../decorators/get-user.decorator';
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
