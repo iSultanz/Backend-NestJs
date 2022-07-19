@@ -1,6 +1,6 @@
-import { BadRequestException, Inject, Injectable, UnsupportedMediaTypeException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, UnsupportedMediaTypeException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { isDefined, isMimeType } from 'class-validator';
+import { isDefined, isMimeType, isUUID } from 'class-validator';
 import { isNumber, isString } from 'lodash';
 import { AuthService } from '../../auth/service/auth.service';
 import { FileInterface, OptionArray } from '../type/user-avatar';
@@ -18,11 +18,21 @@ export class UserAvatarService {
 
 
     async getAvatarForUserWith(id: string) {
+        if(!isUUID(id)){
+            throw new NotFoundException('user not found!');
+          }
         const user = await this.authService.userRepository.findOne({ id });
-        
-        return this.userAvatarRepository.findOne({ where: { 
+        if(!user){
+            throw new NotFoundException('user not found!')
+        }
+        const avatar = await this.userAvatarRepository.findOne({ where: { 
             user
         }, relations: ['user'] })
+        if(!avatar){
+            throw new BadRequestException("User don't have avatar");
+        }
+        return avatar;  
+            
     }
 
     async UploadAvatar(user_id: string, file: Express.Multer.File){
