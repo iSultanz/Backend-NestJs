@@ -3,6 +3,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Readable } from 'stream';
 import { UserAvatarService } from '../service/user-avatar.service';
+import { ApiTags } from '@nestjs/swagger'
+
+@ApiTags('UserAvatar')
 
 @Controller('user-avatar')
 @UseGuards(AuthGuard())

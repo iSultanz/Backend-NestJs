@@ -10,7 +10,9 @@ import { GetTaskFiliterDto } from "../dto/get-tasks-filiter.dto";
 import { UpdateTaskStatusDto } from "../dto/update-task-status.dto";
 import { Task } from "../entities/task.entity";
 import { TasksService } from "../service/tasks.service";
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('Tasks')
 
 @Controller("tasks")
 @UseGuards(AuthGuard())
